@@ -23,13 +23,3 @@ class Encryption:
         except:
             return False
     
-
-#enc= Encryption()
-#nonce, ciphertext, tag = enc.encrypt(input('Enter a message: '))
-#plaintext = enc.decrypt(nonce, ciphertext, tag)
-#print(f'Cipher text: {ciphertext}')
-#print({plaintext})
-#if not plaintext:
-#    print('Message is corrupted')
-#else:
-#    print(f'Plain text: {plaintext}')
