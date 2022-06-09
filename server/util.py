@@ -1,6 +1,13 @@
 class options:
 
-    server_ip = "0.0.0.0"#"127.0.0.1"
+    local = True
+
+    server_ip : str
+    if local:
+        server_ip = "127.0.0.1"
+    else:
+        server_ip = "0.0.0.0"
+
     server_port = 36000
     server_addr = (server_ip, server_port)
 

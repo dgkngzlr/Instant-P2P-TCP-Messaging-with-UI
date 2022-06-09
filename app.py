@@ -73,7 +73,7 @@ dpg.bind_font(default_font)
 
 if __name__ == "__main__":
     dpg.set_primary_window("main_window", True)
-    dpg.create_viewport(title="My App", width=800, height=600)
+    dpg.create_viewport(title="Kriptex", width=800, height=600)
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.start_dearpygui()

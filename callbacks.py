@@ -7,7 +7,7 @@ from inscription import Encryption
 
 class Callback:
     def __init__(self) -> None:
-        self.is_encryped= False
+        self.is_encrypted= True
         self.enc= Encryption()
         self.global_socket=None
         self.global_listener_thread= None
@@ -16,9 +16,9 @@ class Callback:
 
         first_flag= False
         while True:
-            data_temp = sock.recv(1024)
+            data_temp = sock.recv(4096)
             
-            if (self.is_encryped and data_temp and first_flag):
+            if (self.is_encrypted and data_temp and first_flag):
                 
                 data= pickle.loads(data_temp)
 
@@ -35,7 +35,7 @@ class Callback:
                 dpg.set_value("history_text", f"{out}")
                 #print("Peer A: ", plaintext)
 
-            elif(data_temp and not(self.is_encryped) and first_flag):
+            elif(data_temp and not(self.is_encrypted) and first_flag):
                 plaintext= data_temp.decode("utf-8")
                 previous_text = dpg.get_value("history_text")
                 msg_text = f"\n> Remote : {plaintext}" 
@@ -65,7 +65,7 @@ class Callback:
     def connect_button_callback(self,sender, app_data, user_data):
         if dpg.get_item_configuration("connect_button")["label"] == "Connect":
 
-            sock= self.connect_to_server("18.195.43.50",36000)
+            sock= self.connect_to_server("127.0.0.1",36000)#"18.195.43.50"
             dpg.configure_item("connect_button", label="Disconnect")
 
         else:
@@ -81,7 +81,7 @@ class Callback:
         msg_text = f"\n> Host : {dpg.get_value('message_text')}"
         msg_package = dpg.get_value('message_text')
 
-        if(self.is_encryped):
+        if(self.is_encrypted):
             nonce, ciphertext, tag= self.enc.encrypt(msg_package)
 
             data_temp = {
@@ -101,10 +101,10 @@ class Callback:
     def radio_button_callback(self,sender, app_data, user_data):
         # If radio button value is encrypted
         if dpg.get_value("radio_button") == "Encrypted":
-            self.is_encryped=True
+            self.is_encrypted=True
 
         else:
-            self.is_encryped=False
+            self.is_encrypted=False
 
     def set_host_info(self,ipv4="0.0.0.0", port="00000"):
         dpg.set_value("host_info", f"Host - Ipv4 : {ipv4}\nHost - Ipv4 : {port}")

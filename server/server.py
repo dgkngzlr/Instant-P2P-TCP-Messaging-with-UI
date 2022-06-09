@@ -12,6 +12,7 @@ peer_b_msg: str = "idle"
 peer_a_msg_ts: str = ""
 peer_b_msg_ts: str = ""
 
+is_encrypted = True
 
 def get_time_stamp():
     n = datetime.now()
@@ -20,16 +21,25 @@ def get_time_stamp():
 
 # Peer A listener, sock = conn_a
 def pa_receiver(sock):
-    global peer_a_msg, peer_a_msg_ts
+    global peer_a_msg, peer_a_msg_ts, is_encrypted
 
     while True:
 
         try:
-            data = sock.recv(1024)
-
+            data = sock.recv(4096)
             if data and sock.fileno() != -1:
-                peer_a_msg = data.decode("utf-8")
-                peer_a_msg_ts = get_time_stamp()
+                
+                 # If received data is string
+                try:
+                    peer_a_msg = data.decode("utf-8")
+                    peer_a_msg_ts = get_time_stamp()
+                    is_encrypted = False
+
+                # If received data is byte object
+                except:
+                    peer_a_msg = data
+                    peer_a_msg_ts = get_time_stamp()
+                    is_encrypted = True
 
         except Exception as e:
             peer_a_msg = "idle"
@@ -40,16 +50,24 @@ def pa_receiver(sock):
 
 # Peer B listener, sock = conn_b
 def pb_receiver(sock):
-    global peer_b_msg, peer_b_msg_ts
+    global peer_b_msg, peer_b_msg_ts, is_encrypted
 
     while True:
 
         try:
-            data = sock.recv(1024)
-
+            data = sock.recv(4096)
             if data and sock.fileno() != -1:
-                peer_b_msg = data.decode("utf-8")
-                peer_b_msg_ts = get_time_stamp()
+
+                # If received data is string
+                try:
+                    peer_b_msg = data.decode("utf-8")
+                    peer_b_msg_ts = get_time_stamp()
+                    is_encrypted = False
+                # If received data is byte object
+                except:
+                   peer_b_msg = data 
+                   peer_b_msg_ts = get_time_stamp()
+                   is_encrypted = True
 
         except Exception as e:
 
@@ -76,22 +94,39 @@ def com_handler(peer_a_, peer_b_):
     prev_a_ts = ""
     prev_b_ts = ""
     while True:
+
         # If time stamp is updated
         if peer_b_msg != "idle" and prev_b_ts != peer_b_msg_ts and conn_a.fileno() != -1:
             try:
-                conn_a.send(peer_b_msg.encode())
-                prev_b_ts = peer_b_msg_ts
-            except Exception as e:
+                print(peer_b_msg)
 
+                if is_encrypted:
+                    conn_a.send(peer_b_msg)
+                
+                else:
+                    conn_a.send(peer_b_msg.encode())
+
+                prev_b_ts = peer_b_msg_ts
+
+            except Exception as e:
+                print(e)
                 prev_b_ts = ""
                 break
 
         if peer_a_msg != "idle" and prev_a_ts != peer_a_msg_ts and conn_b.fileno() != -1:
             try:
-                conn_b.send(peer_a_msg.encode())
-                prev_a_ts = peer_a_msg_ts
-            except Exception as e:
+                print(peer_a_msg)
 
+                if is_encrypted:
+                    conn_b.send(peer_a_msg)
+                    
+                else:
+                    conn_b.send(peer_a_msg.encode())
+                
+                prev_a_ts = peer_a_msg_ts
+
+            except Exception as e:
+                print(e)
                 prev_a_ts = ""
                 break
 
