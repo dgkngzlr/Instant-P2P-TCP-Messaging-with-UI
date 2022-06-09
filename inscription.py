@@ -3,7 +3,7 @@ from secrets import token_bytes
 
 class Encryption:
     def __init__(self):
-        with open ("isa256.key", "rb") as f:
+        with open ("isa256_pseudo.key", "rb") as f:
             self.key=f.read()
 
         
