@@ -1,6 +1,6 @@
 class options:
 
-    local = True
+    local = False
 
     server_ip : str
     if local:

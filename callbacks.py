@@ -65,7 +65,7 @@ class Callback:
     def connect_button_callback(self,sender, app_data, user_data):
         if dpg.get_item_configuration("connect_button")["label"] == "Connect":
 
-            sock= self.connect_to_server("127.0.0.1",36000)#"18.195.43.50"
+            sock= self.connect_to_server("18.195.43.50",36000)
             dpg.configure_item("connect_button", label="Disconnect")
 
         else:
